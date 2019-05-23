@@ -14,15 +14,15 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-public class EditFilmActivity extends AppCompatActivity {
+public class EditHeroiActivity extends AppCompatActivity {
 
-    EditText tituloEditText;
-    EditText generoEditText;
-    EditText anoEditText;
+    EditText nomeHeroiEditText;
+    EditText nomeEditText;
+    EditText poderEditText;
     EditText imageURL;
     ImageView capaImage;
     Button botaoAcao;
-    Filme filme;
+    Heroi heroi;
     int position;
 
     @Override
@@ -32,10 +32,10 @@ public class EditFilmActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        tituloEditText = (EditText) findViewById(R.id.tituloEditText);
-        generoEditText = (EditText) findViewById(R.id.generoEditText);
-        anoEditText = (EditText) findViewById(R.id.anoEditText);
-        capaImage = (ImageView) findViewById(R.id.capaImageView);
+        nomeHeroiEditText = (EditText) findViewById(R.id.nomeHeroi);
+        nomeEditText = (EditText) findViewById(R.id.generoEditText);
+        poderEditText = (EditText) findViewById(R.id.poder);
+        capaImage = (ImageView) findViewById(R.id.capa);
         imageURL = (EditText) findViewById(R.id.imageEditText);
         botaoAcao = (Button) findViewById(R.id.botaoAcao);
 
@@ -44,13 +44,13 @@ public class EditFilmActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         final int requestCode = bundle.getInt("request_code");
         if (requestCode == 1) {
-            filme = (Filme) bundle.getSerializable("filme");
+            heroi = (Heroi) bundle.getSerializable("filme");
             position = bundle.getInt("position");
-            tituloEditText.setText(filme.getTitulo());
-            generoEditText.setText(filme.getGenero());
-            anoEditText.setText(String.valueOf(filme.getAno()));
-            imageURL.setText(filme.getCapa());
-            Picasso.get().load(filme.getCapa()).resize(500, 800).into(capaImage);
+            tituloEditText.setText(heroi.getTitulo());
+            generoEditText.setText(heroi.getGenero());
+            anoEditText.setText(String.valueOf(heroi.getAno()));
+            imageURL.setText(heroi.getCapa());
+            Picasso.get().load(heroi.getCapa()).resize(500, 800).into(capaImage);
 
             botaoAcao.setText("Atualizar Imagem");
             botaoAcao.setOnClickListener(new View.OnClickListener() {
@@ -64,7 +64,7 @@ public class EditFilmActivity extends AppCompatActivity {
                 }
             });
         } else {
-            filme = new Filme();
+            heroi = new Heroi();
             FloatingActionButton fab = findViewById(R.id.fab);
 
             botaoAcao.setText("Carregar Imagem");
@@ -81,12 +81,12 @@ public class EditFilmActivity extends AppCompatActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    filme.setTitulo(tituloEditText.getText().toString());
-                    filme.setGenero(generoEditText.getText().toString());
-                    filme.setAno(Integer.valueOf(anoEditText.getText().toString()));
+                    heroi.setTitulo(tituloEditText.getText().toString());
+                    heroi.setGenero(generoEditText.getText().toString());
+                    heroi.setAno(Integer.valueOf(anoEditText.getText().toString()));
                     Intent returnIntent = new Intent();
                     Bundle returnBundle = new Bundle();
-                    returnBundle.putSerializable("filme", filme);
+                    returnBundle.putSerializable("filme", heroi);
 
                     if (requestCode == 1)
                         returnBundle.putInt("position", position);
