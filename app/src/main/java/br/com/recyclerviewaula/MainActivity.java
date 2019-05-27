@@ -35,8 +35,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements Actions {
 
-    private List<Filme> listaFilmes;
-    private FilmeAdapter adapter;
+    private List<Heroi> listaHerois;
+    private HeroiAdapter adapter;
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
 
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements Actions {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        new GetFilmesJson().execute();
+        new GetHeroisJson().execute();
     }
 
     @Override
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements Actions {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            Toast.makeText(this, adapter.getListaFilmes().get(0).getTitulo() + " " + adapter.getListaFilmes().get(1).getTitulo() + " " + adapter.getListaFilmes().get(2).getTitulo(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, adapter.getListaHerois().get(0).getNomeHeroi() + " " + adapter.getListaHerois().get(1).getNomeHeroi() + " " + adapter.getListaHerois().get(2).getNomeHeroi(), Toast.LENGTH_LONG).show();
             return true;
         }
 
@@ -75,9 +75,9 @@ public class MainActivity extends AppCompatActivity implements Actions {
 
 
     private void setRecyclerView() {
-        setListaFilmesJson();
+        setListaHeroisJson();
 
-        adapter = new FilmeAdapter(listaFilmes, this);
+        adapter = new HeroiAdapter(listaHerois, this);
 
         recyclerView = (RecyclerView) findViewById(R.id.itemRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -89,13 +89,13 @@ public class MainActivity extends AppCompatActivity implements Actions {
 
     }
 
-    private void setListaFilmesXML() {
+    private void setListaHeroisXML() {
         XmlPullParserFactory pullParserFactory;
         try {
             pullParserFactory = XmlPullParserFactory.newInstance();
             XmlPullParser parser = pullParserFactory.newPullParser();
 
-            InputStream in_s = getApplicationContext().getAssets().open("filmes.xml");
+            InputStream in_s = getApplicationContext().getAssets().open("herois.xml");
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(in_s, null);
 
@@ -109,40 +109,42 @@ public class MainActivity extends AppCompatActivity implements Actions {
     }
 
     private void parseXML(XmlPullParser parser) throws XmlPullParserException, IOException {
-        listaFilmes = null;
+        listaHerois = null;
         int eventType = parser.getEventType();
-        Filme filme = null;
+        Heroi heroi = null;
         while (eventType != XmlPullParser.END_DOCUMENT) {
             String name = null;
             switch (eventType) {
                 case XmlPullParser.START_DOCUMENT:
-                    listaFilmes = new ArrayList<Filme>();
+                    listaHerois = new ArrayList<Heroi>();
                     break;
                 case XmlPullParser.START_TAG:
                     name = parser.getName();
-                    if (name.equals("filme")) {
-                        filme = new Filme();
-                    } else if (filme != null) {
-                        if (name.equals("titulo")) {
-                            filme.setTitulo(parser.nextText());
-                        } else if (name.equals("genero")) {
-                            filme.setGenero(parser.nextText());
-                        } else if (name.equals("ano")) {
-                            filme.setAno(Integer.valueOf(parser.nextText()));
+                    if (name.equals("heroi")) {
+                        heroi = new Heroi();
+                    } else if (heroi != null) {
+                        if (name.equals("nomeHeroi")) {
+                            heroi.setNomeHeroi(parser.nextText());
+                        } else if (name.equals("nome")) {
+                            heroi.setNome(parser.nextText());
+                        } else if (name.equals("poder")) {
+                            heroi.setPoder(parser.nextText());
+                        }else if(name.equals("capa")) {
+                            heroi.setCapa(parser.nextText());
                         }
                     }
                     break;
                 case XmlPullParser.END_TAG:
                     name = parser.getName();
-                    if (name.equalsIgnoreCase("filme") && filme != null) {
-                        listaFilmes.add(filme);
+                    if (name.equalsIgnoreCase("herois") && heroi != null) {
+                        listaHerois.add(heroi);
                     }
             }
             eventType = parser.next();
         }
     }
 
-    private void setListaFilmesJson() {
+    private void setListaHeroisJson() {
 
     }
 
@@ -174,13 +176,13 @@ public class MainActivity extends AppCompatActivity implements Actions {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                inserirFilme();
+                inserirHeroi();
             }
         });
     }
 
-    private void inserirFilme() {
-        Intent intent = new Intent(this, EditFilmActivity.class);
+    private void inserirHeroi() {
+        Intent intent = new Intent(this, EditHeroiActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt("request_code", REQUEST_INSERT);
         intent.putExtras(bundle);
@@ -192,18 +194,18 @@ public class MainActivity extends AppCompatActivity implements Actions {
         if (requestCode == REQUEST_EDIT) {
             if (resultCode == Activity.RESULT_OK) {
                 Bundle bundle = data.getExtras();
-                Filme f = (Filme) bundle.getSerializable("filme");
+                Heroi f = (Heroi) bundle.getSerializable("heroi");
                 int position = bundle.getInt("position");
-                //adapter.updateTitle(f.getTitulo(),position);
-                //adapter.updateAno(f.getAno(),position);
-                //adapter.updateGenero(f.getGenero  (),position);
+//                adapter.update(f.getTitulo(),position);
+//                adapter.updateAno(f.getAno(),position);
+//                adapter.updateGenero(f.getGenero  (),position);
                 adapter.update(f, position);
             }
         }
         if (requestCode == REQUEST_INSERT) {
             if (resultCode == Activity.RESULT_OK) {
                 Bundle bundle = data.getExtras();
-                Filme f = (Filme) bundle.getSerializable("filme");
+                Heroi f = (Heroi) bundle.getSerializable("heroi");
                 adapter.inserir(f);
             }
         }
@@ -223,22 +225,22 @@ public class MainActivity extends AppCompatActivity implements Actions {
     }
 
     @Override
-    public void toast(Filme filme) {
-        Toast.makeText(this, filme.getTitulo() + " " + filme.getGenero() + " " + filme.getAno(), Toast.LENGTH_LONG).show();
+    public void toast(Heroi heroi) {
+        Toast.makeText(this, heroi.getNomeHeroi() + " " + heroi.getNome() + " " + heroi.getPoder(), Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void edit(int position) {
-        Intent intent = new Intent(this, EditFilmActivity.class);
+        Intent intent = new Intent(this, EditHeroiActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt("request_code", REQUEST_EDIT);
-        bundle.putSerializable("filme", adapter.getListaFilmes().get(position));
+        bundle.putSerializable("heroi", adapter.getListaHerois().get(position));
         bundle.putInt("position", position);
         intent.putExtras(bundle);
         startActivityForResult(intent, REQUEST_EDIT);
     }
 
-    private class GetFilmesJson extends AsyncTask<Void, Void, Void> {
+    private class GetHeroisJson extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -248,21 +250,22 @@ public class MainActivity extends AppCompatActivity implements Actions {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            listaFilmes = new ArrayList<Filme>();
+            listaHerois = new ArrayList<Heroi>();
 
             HttpHandler sh = new HttpHandler();
             String jsonStr = sh.makeServiceCall("https://my-json-server.typicode.com/Rafael-Wassoaski/jsonServer/db");
             if (jsonStr != null) {
                 try {
                     JSONObject object = new JSONObject(jsonStr);
-                    JSONArray jsonArray = object.getJSONArray("filmes");
+                    JSONArray jsonArray = object.getJSONArray("herois");
                     for (int i = 0; i < jsonArray.length(); i++) {
-                        Filme f = new Filme();
-                        f.setTitulo(jsonArray.getJSONObject(i).getString("titulo"));
-                        f.setGenero(jsonArray.getJSONObject(i).getString("genero"));
-                        f.setAno(jsonArray.getJSONObject(i).getInt("ano"));
+                        Heroi f = new Heroi();
+                        f.setNomeHeroi(jsonArray.getJSONObject(i).getString("nomeHeroi"));
+                        f.setNomeHeroi("aa");
+                        f.setNome(jsonArray.getJSONObject(i).getString("nome"));
+                        f.setPoder(jsonArray.getJSONObject(i).getString("poder"));
                         f.setCapa(jsonArray.getJSONObject(i).getString("capa"));
-                        listaFilmes.add(f);
+                        listaHerois.add(f);
                     }
                 }  catch (final JSONException e) {
                     Log.e(TAG, "Json parsing error: " + e.getMessage());

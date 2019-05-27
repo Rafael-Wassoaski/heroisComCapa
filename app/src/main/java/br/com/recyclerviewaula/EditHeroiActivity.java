@@ -33,7 +33,7 @@ public class EditHeroiActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         nomeHeroiEditText = (EditText) findViewById(R.id.nomeHeroi);
-        nomeEditText = (EditText) findViewById(R.id.generoEditText);
+        nomeEditText = (EditText) findViewById(R.id.nome);
         poderEditText = (EditText) findViewById(R.id.poder);
         capaImage = (ImageView) findViewById(R.id.capa);
         imageURL = (EditText) findViewById(R.id.imageEditText);
@@ -44,11 +44,11 @@ public class EditHeroiActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         final int requestCode = bundle.getInt("request_code");
         if (requestCode == 1) {
-            heroi = (Heroi) bundle.getSerializable("filme");
+            heroi = (Heroi) bundle.getSerializable("heroi");
             position = bundle.getInt("position");
-            tituloEditText.setText(heroi.getTitulo());
-            generoEditText.setText(heroi.getGenero());
-            anoEditText.setText(String.valueOf(heroi.getAno()));
+            nomeHeroiEditText.setText(heroi.getNomeHeroi());
+            nomeEditText.setText(heroi.getNome());
+            poderEditText.setText(String.valueOf(heroi.getPoder()));
             imageURL.setText(heroi.getCapa());
             Picasso.get().load(heroi.getCapa()).resize(500, 800).into(capaImage);
 
@@ -81,12 +81,13 @@ public class EditHeroiActivity extends AppCompatActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    heroi.setTitulo(tituloEditText.getText().toString());
-                    heroi.setGenero(generoEditText.getText().toString());
-                    heroi.setAno(Integer.valueOf(anoEditText.getText().toString()));
+                    heroi.setNomeHeroi(nomeHeroiEditText.getText().toString());
+                    heroi.setNome(nomeEditText.getText().toString());
+                    heroi.setPoder(poderEditText.getText().toString());
+                    heroi.setCapa(imageURL.getText().toString());
                     Intent returnIntent = new Intent();
                     Bundle returnBundle = new Bundle();
-                    returnBundle.putSerializable("filme", heroi);
+                    returnBundle.putSerializable("heroi", heroi);
 
                     if (requestCode == 1)
                         returnBundle.putInt("position", position);

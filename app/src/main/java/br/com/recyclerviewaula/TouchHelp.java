@@ -6,9 +6,9 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 
 public class TouchHelp extends ItemTouchHelper.SimpleCallback {
 
-    private FilmeAdapter adapter;
+    private HeroiAdapter adapter;
 
-    public TouchHelp(FilmeAdapter adapter) {
+    public TouchHelp(HeroiAdapter adapter) {
         super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT);
         this.adapter = adapter;
     }

@@ -26,7 +26,7 @@ public class HeroiAdapter extends RecyclerView.Adapter {
         this.actions = actions;
     }
 
-    public List<Heroi> getListaFilmes() {
+    public List<Heroi> getListaHerois() {
         return listaHerois;
     }
 
@@ -72,8 +72,8 @@ public class HeroiAdapter extends RecyclerView.Adapter {
         notifyItemInserted(posicaoRemovidoRecentemente);
     }
 
-    public void inserir(Heroi filme){
-        listaHerois.add(filme);
+    public void inserir(Heroi heroi){
+        listaHerois.add(heroi);
         notifyItemInserted(getItemCount());
     }
 
